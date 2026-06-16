@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>绍兴段 · 游玩路线</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif; }
+  #map { width: 100%; height: 100%; }
+
+  .legend-panel {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+    padding: 14px 16px;
+    min-width: 195px;
+    z-index: 100;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #333;
+    user-select: none;
+  }
+  .legend-panel .title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+  }
+  .legend-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+    gap: 8px;
+  }
+  .legend-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .legend-line {
+    width: 22px;
+    height: 3px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .legend-label {
+    color: #555;
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+<div id="map"></div>
+
+<div class="legend-panel" id="legend">
+  <div class="title">绍兴段 · 游玩路线</div>
+  <div class="legend-row"><span class="legend-dot" style="background:#4A90D9;">1</span><span class="legend-label">绍兴北站（到达）</span></div>
+  <div class="legend-row"><span class="legend-dot" style="background:#4A90D9;">2</span><span class="legend-label">鲁迅故里</span></div>
+  <div class="legend-row"><span class="legend-dot" style="background:#4A90D9;">3</span><span class="legend-label">沈园</span></div>
+  <div class="legend-row"><span class="legend-dot" style="background:#4A90D9;">4</span><span class="legend-label">仓桥直街</span></div>
+  <div class="legend-row"><span class="legend-line" style="background:#4A90D9;"></span><span class="legend-label" style="color:#999;">Day 4 路线</span></div>
+  <div class="legend-row"><span class="legend-dot" style="background:#FFB020;">H</span><span class="legend-label">鲁迅故里酒店</span></div>
+  <div class="legend-row"><span class="legend-dot" style="background:#36B37E;">5</span><span class="legend-label">书圣故里</span></div>
+  <div class="legend-row"><span class="legend-dot" style="background:#36B37E;">6</span><span class="legend-label">八字桥</span></div>
+  <div class="legend-row"><span class="legend-dot" style="background:#36B37E;">7</span><span class="legend-label">兰亭（可选）</span></div>
+  <div class="legend-row"><span class="legend-line" style="background:#36B37E;"></span><span class="legend-label" style="color:#999;">Day 5 路线 → 新昌</span></div>
+</div>
+
+<script src="https://webapi.amap.com/maps?v=2.0&key=f0f99d37a1379881c4d77d45d98b05a6&plugin=AMap.Marker,AMap.Polyline,AMap.InfoWindow"></script>
+<script>
+(function() {
+  var map = new AMap.Map('map', {
+    zoom: 13,
+    center: [120.565, 29.995],
+    mapStyle: 'amap://styles/light',
+    resizeEnable: true,
+    features: ['bg', 'road', 'building']
+  });
+
+  map.setDefaultCursor('default');
+
+  function createMarker(lng, lat, label, color, number) {
+    var size = number === 'H' ? '24px' : '26px';
+    var fontSize = number === 'H' ? '11px' : '12px';
+    var content = '<div style="' +
+      'background:' + color + ';' +
+      'width:' + size + ';height:' + size + ';' +
+      'border-radius:50%;' +
+      'color:#fff;' +
+      'text-align:center;' +
+      'line-height:' + size + ';' +
+      'font-size:' + fontSize + ';' +
+      'font-weight:700;' +
+      'box-shadow: 0 2px 6px rgba(0,0,0,0.25);' +
+      'border: 2px solid #fff;' +
+      'cursor:pointer;' +
+    '">' + number + '</div>';
+
+    var marker = new AMap.Marker({
+      position: [lng, lat],
+      content: content,
+      offset: new AMap.Pixel(-13, -13),
+      zIndex: 100,
+      title: label
+    });
+
+    marker.on('click', function() {
+      var info = new AMap.InfoWindow({
+        content: '<div style="padding:4px 6px;font-size:13px;color:#333;">' + label + '</div>',
+        offset: new AMap.Pixel(0, -32)
+      });
+      info.open(map, marker.getPosition());
+    });
+
+    return marker;
+  }
+
+  // Coordinates
+  // 绍兴北站
+  var sxNorth = [120.539485, 30.098661];
+  // 鲁迅故里 (also hotel area)
+  var luxun = [120.584210, 29.991912];
+  // 沈园
+  var shenyuan = [120.590202, 29.991680];
+  // 仓桥直街
+  var cangqiao = [120.577569, 29.998823];
+  // 书圣故里
+  var shusheng = [120.585910, 30.006048];
+  // 八字桥 (越城区)
+  var baziqiao = [120.591561, 29.999705];
+  // 兰亭
+  var lanting = [120.499868, 29.926031];
+
+  var markers = [
+    createMarker(sxNorth[0], sxNorth[1], '① 绍兴北站 · 杭州到达', '#4A90D9', '1'),
+    createMarker(luxun[0], luxun[1], '② 鲁迅故里 · 百草园/三味书屋', '#4A90D9', '2'),
+    createMarker(shenyuan[0], shenyuan[1], '③ 沈园 · 钗头凤碑', '#4A90D9', '3'),
+    createMarker(cangqiao[0], cangqiao[1], '④ 仓桥直街 · 老街小吃', '#4A90D9', '4'),
+    createMarker(luxun[0], luxun[1], '酒店 · 鲁迅故里附近', '#FFB020', 'H'),
+    createMarker(shusheng[0], shusheng[1], '⑤ 书圣故里 · 水乡老街区', '#36B37E', '5'),
+    createMarker(baziqiao[0], baziqiao[1], '⑥ 八字桥 · 最古老立交桥', '#36B37E', '6'),
+    createMarker(lanting[0], lanting[1], '⑦ 兰亭 · 王羲之（可选）', '#36B37E', '7'),
+  ];
+
+  map.add(markers);
+
+  // Day 4 route (Blue): 绍兴北站 → 酒店(鲁迅故里) → 鲁迅故里 → 沈园 → 仓桥直街
+  var day4Line = new AMap.Polyline({
+    path: [sxNorth, luxun, shenyuan, cangqiao],
+    strokeColor: '#4A90D9',
+    strokeWeight: 4,
+    strokeOpacity: 0.7,
+    strokeStyle: 'solid',
+    lineJoin: 'round',
+    lineCap: 'round',
+    zIndex: 50,
+    showDir: true
+  });
+  map.add(day4Line);
+
+  // Day 5 route (Green): 酒店 → 书圣故里 → 八字桥 → 兰亭 → 绍兴北站
+  var day5Line = new AMap.Polyline({
+    path: [luxun, shusheng, baziqiao, lanting, sxNorth],
+    strokeColor: '#36B37E',
+    strokeWeight: 4,
+    strokeOpacity: 0.7,
+    strokeStyle: 'solid',
+    lineJoin: 'round',
+    lineCap: 'round',
+    zIndex: 49,
+    showDir: true
+  });
+  map.add(day5Line);
+
+  // Auto-fit bounds
+  map.setFitView(null, false, [60, 60, 300, 160]);
+
+})();
+</script>
+</body>
+</html>
